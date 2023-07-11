@@ -1,2 +1,0 @@
-# SafeUnlocker
-PDF downloader
