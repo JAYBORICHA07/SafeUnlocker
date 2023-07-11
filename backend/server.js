@@ -4,7 +4,8 @@ import multer from "multer";
 import cors from "cors";
 import { memoryStorage } from "multer";
 import { Readable } from "stream";
-// import Qpdf from 'node-qpdf';
+import Qpdf from 'node-qpdf';
+import { log } from "console";
 
 
 
@@ -29,21 +30,22 @@ app.get("/", (req,res)=>{
 
 app.post("/upload-to-google-drive", upload.single("file"), async (req, res) => {
   try {
+    // console.log({req});
     const file = req.file;
-    const password = req.password;
-    console.log(password);
+    console.log(file);
+    const password = req.body.password;
     let outputfile;
-    // Qpdf.decrypt(file, password, outputfile);
-
+    outputfile =Qpdf.decrypt(file, password, '../outputfile');
+    console.log(outputfile);
     const folderId = "1XVTBP1njQ8d3OarbVTCqJDjly0YNChRo"; 
     const media = {
-      mimeType: outputfile.mimetype,
-      body: Readable.from(outputfile.buffer),
+      mimeType: file.mimetype,
+      body: Readable.from(file.buffer),
     };
     const response = await drive.files.create({
       requestBody: {
         name: file.originalname,
-        mimeType: outputfile.mimetype,
+        mimeType: file.mimetype,
         parents: [folderId],
       },
       media: media,
